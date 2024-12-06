@@ -16,8 +16,8 @@ I've created a function `createDesignatedSpreadsheetAndExport()` which is succes
 
 **Data Update**  
 
-Since we are working with two different spreadsheets, I've added them both to the same folder along with my google app scripts. Data is being fetched in real-time from the designated spreadsheet.
-Link to the Drive folder :https://drive.google.com/drive/folders/1QYgnFcIXW-YLTbDuOqXWNc-xlrvJWDji?usp=drive_link
+Since we are working with two different spreadsheets, I've added them both to the same folder along with my google app scripts. Data is being fetched in real-time from the designated spreadsheet.\
+Link to the Drive folder: https://drive.google.com/drive/folders/1QYgnFcIXW-YLTbDuOqXWNc-xlrvJWDji?usp=drive_link
 
 **Monitoring of changes**  
 
