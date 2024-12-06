@@ -23,7 +23,6 @@ Link to the Drive folder :https://drive.google.com/drive/folders/1QYgnFcIXW-YLTb
 
 To monitor our source spreadsheets, I've added container-bound scripts for both sheets. The function is as follows : 
 
-`
 function onEdit(e) {
   try {
     const recipient = "durkovicjakub@gmail.com";
@@ -32,13 +31,12 @@ function onEdit(e) {
     const sheetName = e.source.getActiveSheet().getName(); 
     const cellValue = range.getValue(); 
     const body = "A change was made to the spreadsheet.\n\nSheet: ${sheetName}\nRange: ${range.getA1Notation()}\nNew Value: ${cellValue}";
-
     GmailApp.sendEmail(recipient, subject, body);
   } catch (error) {
     console.error("Error in onEdit trigger:", error);
   }
 }
-`
+
 
 # Visuals
 
