@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Integration App by Jakub Durkovic</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #3498db;
+      --secondary-color: #2ecc71;
+      --text-color: #2c3e50;
+      --background-color: #f4f6f7;
+      --card-background: #ffffff;
+      --border-radius: 12px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      background-color: var(--background-color);
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      background: var(--card-background);
+      padding: 30px;
+      border-radius: var(--border-radius);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    }
+
+    h1 {
+      text-align: center;
+      color: var(--primary-color);
+      margin-bottom: 30px;
+      font-weight: 600;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    select, input, button {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      font-size: 15px;
+    }
+
+    select:focus, input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    }
+
+    button {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      margin-top: 15px;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #2980b9;
+    }
+
+    button:disabled {
+      background-color: #bdc3c7;
+      cursor: not-allowed;
+    }
+
+    .columns-container {
+      display: flex;
+      gap: 20px;
+    }
+
+    .column {
+      flex: 1;
+      background-color: #f9f9f9;
+      padding: 15px;
+      border-radius: 8px;
+    }
+
+    .column h3 {
+      margin-bottom: 15px;
+      color: var(--primary-color);
+      font-size: 18px;
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      width: auto;
+      margin-right: 10px;
+      appearance: none;
+      -webkit-appearance: none;
+      height: 20px;
+      width: 20px;
+      border: 2px solid #ccc;
+      border-radius: 4px;
+      outline: none;
+      transition: all 0.3s;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .checkbox-group input[type="checkbox"]:checked {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+
+    .checkbox-group input[type="checkbox"]:checked::after {
+      content: '\2713';
+      color: white;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 14px;
+    }
+
+    .checkbox-group label {
+      margin: 0;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .popup {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+      z-index: 1000;
+    }
+
+    .popup.show {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .popup-content {
+      background: white;
+      padding: 30px;
+      border-radius: var(--border-radius);
+      width: 450px;
+      text-align: center;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    }
+
+    .popup h2 {
+      color: var(--primary-color);
+      margin-bottom: 20px;
+    }
+
+    .popup input[type="email"] {
+      margin: 15px 0;
+    }
+
+    @media (max-width: 768px) {
+      .columns-container {
+        flex-direction: column;
+      }
+
+      .container {
+        margin: 20px;
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Data Integration App</h1>
+    <form id="filterForm">
+      <div class="form-group">
+        <label for="group">Select Group</label>
+        <select id="group" name="group" onchange="fetchCostCenters()">
+          <option value="">Loading groups...</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Select Cost Centers</label>
+        <div id="costCentersContainer">
+          <p>Select a group to load cost centers...</p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Select Columns</label>
+        <div class="columns-container">
+          <div class="column" id="peopleColumnsContainer">
+            <h3>Finance Columns</h3>
+            <p>Loading columns...</p>
+          </div>
+          <div class="column" id="costCenterColumnsContainer">
+            <h3>Cost Center Columns</h3>
+            <p>Loading columns...</p>
+          </div>
+        </div>
+      </div>
+
+      <button type="button" id="generateButton" onclick="submitFilters()">Generate Report</button>
+      <button type="button" id="downloadButton" onclick="downloadXLSX()" disabled>Download as XLSX</button>
+      <button type="button" id="assignButton" onclick="showEmailPopup('createDesignatedSpreadsheet')" disabled>Assign Ownership & Email</button>
+      <button type="button" id="assignExportButton" onclick="showEmailPopup('createDesignatedSpreadsheetAndExport')" disabled>Assign Ownership, Email & Export</button>
+    </form>
+  </div>
+
+  <div class="popup" id="emailPopup">
+    <div class="popup-content">
+      <h2>Enter Recipient Email</h2>
+      <input type="email" id="popupEmailInput" placeholder="Enter email" required>
+      <button onclick="submitEmail()">Submit</button>
+      <button onclick="closePopup()">Cancel</button>
+    </div>
+  </div>
+
+  <script>
+    let emailAction = '';
+
+    window.onload = function() {
+      google.script.run.withSuccessHandler(renderGroups).getGroups();
+      google.script.run.withSuccessHandler(renderColumns).getColumns();
+    };
+
+    function renderGroups(groups) {
+      const groupSelect = document.getElementById('group');
+      groupSelect.innerHTML = '<option value="">-- Select a Group --</option>';
+      groups.forEach(group => {
+        const option = document.createElement('option');
+        option.value = group;
+        option.textContent = group;
+        groupSelect.appendChild(option);
+      });
+    }
+
+    function renderCheckboxes(container, items, name) {
+      container.innerHTML = '';
+      items.forEach(item => {
+        const checkboxGroup = document.createElement('div');
+        checkboxGroup.className = 'checkbox-group';
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.name = name;
+        checkbox.value = item;
+
+        const label = document.createElement('label');
+        label.innerText = item;
+
+        checkboxGroup.appendChild(checkbox);
+        checkboxGroup.appendChild(label);
+        container.appendChild(checkboxGroup);
+      });
+    }
+
+    function fetchCostCenters() {
+      const group = document.getElementById('group').value;
+      if (group) {
+        google.script.run.withSuccessHandler(renderCostCenters).getCostCenters(group);
+      } else {
+        document.getElementById('costCentersContainer').innerHTML = '<p>Please select a group first.</p>';
+      }
+    }
+
+    function renderCostCenters(costCenters) {
+      const container = document.getElementById('costCentersContainer');
+      renderCheckboxes(container, costCenters, 'costCenters');
+    }
+
+    function renderColumns(columns) {
+      const peopleContainer = document.getElementById('peopleColumnsContainer');
+      const costCenterContainer = document.getElementById('costCenterColumnsContainer');
+
+      peopleContainer.innerHTML = '<h3>Finance Columns</h3>';
+      renderCheckboxes(peopleContainer, columns.people, 'columns');
+
+      costCenterContainer.innerHTML = '<h3>Cost Center Columns</h3>';
+      renderCheckboxes(costCenterContainer, columns.costCenters, 'columns');
+    }
+
+    function submitFilters() {
+      const group = document.getElementById('group').value;
+      const selectedCostCenters = Array.from(document.querySelectorAll('input[name="costCenters"]:checked')).map(cb => cb.value);
+      const selectedColumns = Array.from(document.querySelectorAll('input[name="columns"]:checked')).map(cb => cb.value);
+
+      google.script.run
+        .withSuccessHandler(() => {
+          alert('Report generated successfully.');
+          document.getElementById('downloadButton').disabled = false;
+          document.getElementById('assignButton').disabled = false;
+          document.getElementById('assignExportButton').disabled = false;
+        })
+        .withFailureHandler((error) => {
+          alert('Error: ' + error.message);
+        })
+        .generateFilteredReport({ costCenters: selectedCostCenters, selectedColumns });
+    }
+
+    function downloadXLSX() {
+      google.script.run
+        .withSuccessHandler((url) => {
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = 'Filtered_Report.xlsx';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        })
+        .withFailureHandler((error) => {
+          alert('Error: ' + error.message);
+        })
+        .downloadAsXLSX();
+    }
+
+    function showEmailPopup(action) {
+      emailAction = action;
+      const popup = document.getElementById('emailPopup');
+      popup.classList.add('show');
+    }
+
+    function closePopup() {
+      const popup = document.getElementById('emailPopup');
+      popup.classList.remove('show');
+    }
+
+    function submitEmail() {
+      const email = document.getElementById('popupEmailInput').value;
+
+      if (!email || !email.includes('@')) {
+        alert('Please enter a valid email address.');
+        return;
+      }
+
+      google.script.run
+        .withSuccessHandler(() => {
+          alert('Email sent successfully!');
+          closePopup();
+        })
+        .withFailureHandler((error) => {
+          alert('Error: ' + error.message);
+        })[emailAction](email);
+    }
+  </script>
+</body>
+</html>
