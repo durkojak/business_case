@@ -26,7 +26,7 @@ function onEdit(e) {
     const range = e.range; 
     const sheetName = e.source.getActiveSheet().getName(); 
     const cellValue = range.getValue(); 
-    const body = `A change was made to the spreadsheet.\n\nSheet: ${sheetName}\nRange: ${range.getA1Notation()}\nNew Value: ${cellValue}`;
+    const body = \`A change was made to the spreadsheet.\n\nSheet: ${sheetName}\nRange: ${range.getA1Notation()}\nNew Value: ${cellValue}\`;
 
     GmailApp.sendEmail(recipient, subject, body);
   } catch (error) {
