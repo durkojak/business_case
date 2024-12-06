@@ -21,21 +21,12 @@ Link to the Drive folder: https://drive.google.com/drive/folders/1QYgnFcIXW-YLTb
 
 **Monitoring of changes**  
 
-To monitor our source spreadsheets, I've added container-bound scripts for both sheets. The function is as follows : 
+To monitor our source spreadsheets, I've used trigger that triggers on edit for both sheets.
 
-function onEdit(e) {
-  try {
-    const recipient = "durkovicjakub@gmail.com";
-    const subject = "Spreadsheet Edited";
-    const range = e.range; 
-    const sheetName = e.source.getActiveSheet().getName(); 
-    const cellValue = range.getValue(); 
-    const body = "A change was made to the spreadsheet.\n\nSheet: ${sheetName}\nRange: ${range.getA1Notation()}\nNew Value: ${cellValue}";
-    GmailApp.sendEmail(recipient, subject, body);
-  } catch (error) {
-    console.error("Error in onEdit trigger:", error);
-  }
-}
+![Project Logo](./images/trigger1.png)
+![Project Logo](./images/trigger2.png)
+
+
 
 
 # Visuals
